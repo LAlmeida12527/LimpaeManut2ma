@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Sobre o Limpaê — Protótipo acadêmico</title>
+<meta name="description" content="Conheça o problema, a proposta e o impacto esperado do Limpaê, um protótipo acadêmico de denúncia de descarte irregular." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ===== TOKENS (mesmos da home) ===== */
+:root{
+  --forest:#14532d;
+  --forest-deep:#0f3d22;
+  --emerald:#22c55e;
+  --lime:#84cc16;
+  --white:#ffffff;
+  --slate-50:#f8fafc;
+  --slate-200:#e2e8f0;
+  --slate-500:#64748b;
+  --slate-900:#0f172a;
+
+  --radius-sm:10px;
+  --radius-md:16px;
+  --radius-lg:24px;
+  --radius-pill:999px;
+
+  --shadow-sm:0 2px 8px rgba(15,23,42,0.06);
+  --shadow-md:0 12px 32px rgba(15,61,34,0.10);
+  --shadow-lg:0 24px 64px rgba(15,61,34,0.16);
+
+  --ease:cubic-bezier(.16,1,.3,1);
+  --max-width:1180px;
+  --header-h:72px;
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+}
+
+body{ margin:0; font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; color:var(--slate-900); background:#fff; line-height:1.65; -webkit-font-smoothing:antialiased; }
+img{ max-width:100%; display:block; }
+a{ color:inherit; }
+button{ font-family:inherit; }
+:focus-visible{ outline:3px solid var(--lime); outline-offset:2px; border-radius:6px; }
+.container{ max-width:var(--max-width); margin:0 auto; padding:0 24px; }
+
+.notice{ background:var(--forest-deep); color:#eafff1; text-align:center; font-size:13px; font-weight:500; padding:9px 16px; }
+.notice strong{ font-weight:700; color:var(--lime); }
+
+header{ position:sticky; top:0; z-index:500; height:var(--header-h); display:flex; align-items:center; background:rgba(255,255,255,0.85); backdrop-filter:blur(12px) saturate(1.4); -webkit-backdrop-filter:blur(12px) saturate(1.4); border-bottom:1px solid rgba(15,23,42,0.06); }
+.header-inner{ width:100%; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.brand{ display:flex; align-items:center; gap:10px; text-decoration:none; }
+.brand-mark{ width:34px; height:34px; border-radius:10px; background:linear-gradient(145deg,var(--emerald),var(--forest)); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:16px; box-shadow:var(--shadow-sm); }
+.brand-name{ font-weight:700; font-size:19px; color:var(--forest); letter-spacing:-0.01em; }
+.brand-tag{ font-size:11px; font-weight:600; color:var(--forest); background:var(--slate-50); border:1px solid var(--slate-200); padding:3px 9px; border-radius:var(--radius-pill); }
+
+nav.main-nav{ display:flex; align-items:center; gap:4px; }
+nav.main-nav a{ text-decoration:none; font-weight:600; font-size:15px; color:var(--slate-900); padding:9px 14px; border-radius:var(--radius-sm); transition:background .2s var(--ease), color .2s var(--ease); }
+nav.main-nav a:hover{ background:var(--slate-50); color:var(--forest); }
+nav.main-nav a.nav-cta{ background:var(--forest); color:#fff; margin-left:6px; box-shadow:var(--shadow-sm); }
+nav.main-nav a.nav-cta:hover{ background:var(--forest-deep); }
+nav.main-nav a.active{ color:var(--forest); background:var(--slate-50); }
+
+.nav-toggle{ display:none; background:none; border:0; cursor:pointer; width:40px; height:40px; border-radius:var(--radius-sm); align-items:center; justify-content:center; }
+.nav-toggle:hover{ background:var(--slate-50); }
+.nav-toggle svg{ width:22px; height:22px; }
+
+.mobile-menu{ position:fixed; inset:0; z-index:900; background:rgba(15,23,42,0.4); backdrop-filter:blur(2px); opacity:0; visibility:hidden; transition:opacity .25s var(--ease), visibility .25s var(--ease); }
+.mobile-menu.open{ opacity:1; visibility:visible; }
+.mobile-panel{ position:absolute; top:0; right:0; height:100%; width:min(320px,86vw); background:#fff; padding:24px; display:flex; flex-direction:column; gap:6px; box-shadow:-12px 0 48px rgba(15,23,42,0.18); transform:translateX(24px); transition:transform .3s var(--ease); }
+.mobile-menu.open .mobile-panel{ transform:translateX(0); }
+.mobile-panel a{ text-decoration:none; color:var(--slate-900); font-weight:600; font-size:17px; padding:14px 12px; border-radius:var(--radius-sm); border-bottom:1px solid var(--slate-200); }
+.mobile-panel a.nav-cta{ background:var(--forest); color:#fff; border:0; text-align:center; margin-top:10px; }
+
+@media (max-width:760px){
+  nav.main-nav{ display:none; }
+  .nav-toggle{ display:flex; }
+}
+
+/* ===== PAGE HERO ===== */
+.page-hero{
+  padding:72px 0 60px;
+  background:linear-gradient(180deg,var(--slate-50),#fff);
+  text-align:center;
+  border-bottom:1px solid var(--slate-200);
+}
+.section-eyebrow{ font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--emerald); margin-bottom:14px; display:block; }
+.page-hero h1{ font-size:clamp(30px,4.6vw,46px); font-weight:800; letter-spacing:-0.02em; margin:0 0 16px; max-width:760px; margin-inline:auto; }
+.page-hero p{ font-size:17px; color:var(--slate-500); max-width:600px; margin:0 auto; }
+
+/* ===== ARTICLE SECTIONS ===== */
+.section{ padding:80px 0; }
+.section-alt{ background:var(--slate-50); }
+.section-tight{ padding:64px 0; }
+
+.split{
+  display:grid; grid-template-columns:340px 1fr; gap:56px; align-items:start;
+}
+.split .tag-col{ position:sticky; top:96px; }
+@media (max-width:860px){
+  .split{ grid-template-columns:1fr; gap:24px; }
+  .split .tag-col{ position:static; }
+}
+
+.kicker{
+  display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:700;
+  color:var(--forest); background:rgba(34,197,94,0.10); padding:7px 14px; border-radius:var(--radius-pill);
+  margin-bottom:16px;
+}
+.split h2{ font-size:clamp(26px,3.2vw,34px); font-weight:800; letter-spacing:-0.02em; margin:0 0 6px; color:var(--slate-900); }
+.split .body p{ font-size:16.5px; color:#334155; margin:0 0 16px; }
+.split .body p:last-child{ margin-bottom:0; }
+
+.divider{ height:1px; background:var(--slate-200); margin:0; }
+
+/* ===== IMPACT GRID ===== */
+.impact-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
+@media (max-width:760px){ .impact-grid{ grid-template-columns:1fr; } }
+.impact-card{
+  background:#fff; border:1px solid var(--slate-200); border-radius:var(--radius-lg);
+  padding:28px; display:flex; gap:16px; box-shadow:var(--shadow-sm);
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.impact-card:hover{ transform:translateY(-3px); box-shadow:var(--shadow-md); }
+.impact-card .ico{
+  flex-shrink:0; width:46px; height:46px; border-radius:12px; background:rgba(132,204,22,0.14);
+  display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--forest);
+}
+.impact-card h3{ font-size:16px; font-weight:700; margin:0 0 6px; }
+.impact-card p{ font-size:14.5px; color:var(--slate-500); margin:0; }
+
+/* ===== TECH STACK ===== */
+.tech-grid{ display:flex; flex-wrap:wrap; gap:14px; }
+.tech-chip{
+  display:flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--slate-200);
+  padding:12px 18px; border-radius:var(--radius-pill); font-weight:600; font-size:14.5px; box-shadow:var(--shadow-sm);
+}
+.tech-chip .dot{ width:8px; height:8px; border-radius:50%; background:var(--emerald); }
+
+/* ===== TEAM ===== */
+.team-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:20px; }
+.team-card{
+  text-align:center; background:#fff; border:1px solid var(--slate-200); border-radius:var(--radius-lg);
+  padding:28px 18px; box-shadow:var(--shadow-sm); transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.team-card:hover{ transform:translateY(-3px); box-shadow:var(--shadow-md); }
+.team-avatar{
+  width:64px; height:64px; border-radius:50%; margin:0 auto 14px;
+  background:linear-gradient(150deg,var(--emerald),var(--forest));
+  display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:20px;
+}
+.team-card strong{ display:block; font-size:15px; }
+.team-card span{ font-size:13px; color:var(--slate-500); }
+
+/* ===== ACADEMIC BAND ===== */
+.academic-band{
+  border:1.5px dashed var(--slate-200); border-radius:var(--radius-lg); padding:36px 32px;
+  display:flex; gap:20px; align-items:flex-start; background:var(--slate-50);
+}
+.academic-band .ico{ font-size:28px; flex-shrink:0; }
+.academic-band h3{ margin:0 0 8px; font-size:18px; font-weight:700; }
+.academic-band p{ margin:0; color:var(--slate-500); font-size:15px; max-width:640px; }
+
+/* ===== FOOTER ===== */
+footer{ background:var(--slate-900); color:rgba(255,255,255,0.7); padding:56px 0 28px; }
+.footer-top{ display:flex; justify-content:space-between; gap:32px; flex-wrap:wrap; margin-bottom:36px; }
+.footer-brand .brand-name{ color:#fff; }
+.footer-brand p{ max-width:320px; font-size:14px; color:rgba(255,255,255,0.55); margin-top:10px; }
+.footer-cols{ display:flex; gap:48px; flex-wrap:wrap; }
+.footer-col h4{ font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:rgba(255,255,255,0.45); margin:0 0 14px; }
+.footer-col a{ display:block; text-decoration:none; color:rgba(255,255,255,0.75); font-size:14.5px; margin-bottom:10px; }
+.footer-col a:hover{ color:var(--lime); }
+.footer-bottom{ border-top:1px solid rgba(255,255,255,0.10); padding-top:24px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; font-size:13px; color:rgba(255,255,255,0.45); }
+.footer-bottom strong{ color:rgba(255,255,255,0.7); }
+
+.reveal{ opacity:0; transform:translateY(18px); transition:opacity .6s var(--ease), transform .6s var(--ease); }
+.reveal.is-visible{ opacity:1; transform:translateY(0); }
+
+@media (max-width:600px){
+  .section{ padding:56px 0; }
+  .academic-band{ flex-direction:column; padding:24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="notice"><strong>Projeto acadêmico</strong> — protótipo conceitual sem vínculo com órgãos públicos</div>
+
+<header>
+  <div class="container header-inner">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">L</span>
+      <span class="brand-name">Limpaê</span>
+      <span class="brand-tag">Protótipo</span>
+    </a>
+    <nav class="main-nav" aria-label="Navegação principal">
+      <a href="index.html">Início</a>
+      <a href="index.html#como-funciona">Como funciona</a>
+      <a href="sobre.html" class="active" aria-current="page">Sobre</a>
+      <a href="denuncia.html" class="nav-cta">Denunciar local</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobileMenu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Menu de navegação">
+  <div class="mobile-panel">
+    <a href="index.html">Início</a>
+    <a href="index.html#como-funciona">Como funciona</a>
+    <a href="sobre.html">Sobre</a>
+    <a href="denuncia.html" class="nav-cta">Denunciar local</a>
+  </div>
+</div>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="section-eyebrow">Sobre o projeto</span>
+    <h1>Um conceito para enfrentar o descarte irregular</h1>
+    <p>O Limpaê nasceu de uma pesquisa de campo em Lauro de Freitas e se tornou um protótipo acadêmico sobre como a tecnologia pode simplificar a denúncia ambiental.</p>
+  </div>
+</section>
+
+<section class="section reveal">
+  <div class="container split">
+    <div class="tag-col">
+      <span class="kicker">🧭 O problema</span>
+      <h2>Por que o Limpaê existe</h2>
+    </div>
+    <div class="body">
+      <p>Durante a pesquisa de campo, identificamos que Lauro de Freitas enfrenta o acúmulo recorrente de resíduos em vias públicas, terrenos baldios e áreas próximas a córregos — um padrão presente em boa parte das cidades brasileiras de médio porte.</p>
+      <p>Esse cenário compromete a saúde pública, contamina recursos hídricos e degrada espaços que poderiam ser de convívio. Ao mesmo tempo, os canais de denúncia disponíveis costumam ser pouco intuitivos, o que desestimula o registro por parte da população.</p>
+    </div>
+  </div>
+</section>
+
+<div class="container"><div class="divider"></div></div>
+
+<section class="section section-alt reveal">
+  <div class="container split">
+    <div class="tag-col">
+      <span class="kicker">🎯 O objetivo</span>
+      <h2>O que nos propusemos a resolver</h2>
+    </div>
+    <div class="body">
+      <p>Criar um fluxo de denúncia tão simples que qualquer pessoa, em qualquer nível de familiaridade com tecnologia, consiga registrar um ponto de descarte em poucos minutos — com foto, localização e uma descrição clara do problema.</p>
+      <p>O objetivo acadêmico é demonstrar, de forma tangível, como esse conceito poderia funcionar caso fosse implementado por uma prefeitura ou órgão ambiental, sem a complexidade de um sistema de produção.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section reveal">
+  <div class="container split">
+    <div class="tag-col">
+      <span class="kicker">💡 A solução</span>
+      <h2>Como o protótipo responde a isso</h2>
+    </div>
+    <div class="body">
+      <p>O Limpaê propõe um wizard de quatro etapas — categoria, localização, fotos e revisão — apoiado por um mapa interativo para marcar o ponto exato do descarte. O usuário pode optar por enviar a denúncia de forma anônima.</p>
+      <p>Tudo é processado no próprio navegador: as denúncias simuladas ficam salvas localmente, apenas para fins de demonstração, sem qualquer envio a órgãos reais.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt reveal">
+  <div class="container">
+    <div style="text-align:center; max-width:640px; margin:0 auto 48px;">
+      <span class="section-eyebrow">Impacto esperado</span>
+      <h2 style="font-size:clamp(26px,3.2vw,34px); font-weight:800; letter-spacing:-0.02em; margin:0 0 12px;">Se implementado de verdade</h2>
+      <p style="color:var(--slate-500); font-size:16px; margin:0;">Estes são os ganhos conceituais que a proposta busca demonstrar.</p>
+    </div>
+
+    <div class="impact-grid">
+      <div class="impact-card">
+        <div class="ico">⏱️</div>
+        <div><h3>Denúncia mais rápida</h3><p>Reduz o tempo entre identificar o problema e registrá-lo formalmente.</p></div>
+      </div>
+      <div class="impact-card">
+        <div class="ico">🗺️</div>
+        <div><h3>Localização precisa</h3><p>O mapa interativo elimina ambiguidades de endereço na descrição do local.</p></div>
+      </div>
+      <div class="impact-card">
+        <div class="ico">📊</div>
+        <div><h3>Dados organizados</h3><p>Categoria e gravidade padronizadas facilitam priorização por parte dos órgãos.</p></div>
+      </div>
+      <div class="impact-card">
+        <div class="ico">🔒</div>
+        <div><h3>Participação sem exposição</h3><p>A opção de denúncia anônima incentiva o engajamento da população.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section reveal">
+  <div class="container split">
+    <div class="tag-col">
+      <span class="kicker">🛠️ Tecnologias</span>
+      <h2>O que foi usado para construir o protótipo</h2>
+    </div>
+    <div class="body">
+      <div class="tech-grid">
+        <div class="tech-chip"><span class="dot"></span>HTML5 &amp; CSS3</div>
+        <div class="tech-chip"><span class="dot"></span>JavaScript (Vanilla)</div>
+        <div class="tech-chip"><span class="dot"></span>Leaflet.js (mapa)</div>
+        <div class="tech-chip"><span class="dot"></span>OpenStreetMap</div>
+        <div class="tech-chip"><span class="dot"></span>Nominatim (geocodificação)</div>
+        <div class="tech-chip"><span class="dot"></span>LocalStorage (simulação)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt reveal">
+  <div class="container">
+    <div style="text-align:center; max-width:640px; margin:0 auto 40px;">
+      <span class="section-eyebrow">Equipe</span>
+      <h2 style="font-size:clamp(26px,3.2vw,34px); font-weight:800; letter-spacing:-0.02em; margin:0;">Quem desenvolveu o Limpaê</h2>
+    </div>
+    <div class="team-grid">
+      <div class="team-card"><div class="team-avatar">A</div><strong>Integrante A</strong><span>Pesquisa &amp; conteúdo</span></div>
+      <div class="team-card"><div class="team-avatar">B</div><strong>Integrante B</strong><span>Design &amp; UX</span></div>
+      <div class="team-card"><div class="team-avatar">C</div><strong>Integrante C</strong><span>Front-end</span></div>
+      <div class="team-card"><div class="team-avatar">D</div><strong>Integrante D</strong><span>Apresentação</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="academic-band reveal">
+      <div class="ico">🎓</div>
+      <div>
+        <h3>Protótipo acadêmico</h3>
+        <p>O Limpaê foi desenvolvido como projeto escolar para fins exclusivamente educacionais. Não é um serviço oficial, não envia denúncias a órgãos reais e não deve substituir os canais oficiais de denúncia ambiental do município.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="brand"><span class="brand-mark">L</span><span class="brand-name">Limpaê</span></a>
+        <p>Protótipo acadêmico para denúncia de descarte irregular de resíduos. Desenvolvido para fins educacionais.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Navegação</h4>
+          <a href="index.html">Início</a>
+          <a href="index.html#como-funciona">Como funciona</a>
+          <a href="sobre.html">Sobre o projeto</a>
+          <a href="denuncia.html">Denunciar local</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span><strong>Limpaê</strong> · Protótipo escolar — não é um serviço oficial</span>
+      <span>Apresentação acadêmica · 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var toggle = document.getElementById('navToggle');
+  var menu = document.getElementById('mobileMenu');
+  function closeMenu(){ menu.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); document.body.style.overflow=''; }
+  function openMenu(){ menu.classList.add('open'); toggle.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; }
+  toggle.addEventListener('click', function(){ menu.classList.contains('open') ? closeMenu() : openMenu(); });
+  menu.addEventListener('click', function(e){ if(e.target === menu) closeMenu(); });
+  menu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeMenu); });
+  window.addEventListener('resize', function(){ if(window.innerWidth > 760) closeMenu(); });
+
+  var revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){ entry.target.classList.add('is-visible'); io.unobserve(entry.target); }
+      });
+    }, { threshold:0.12 });
+    revealEls.forEach(function(el){ io.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('is-visible'); });
+  }
+})();
+</script>
+</body>
+</html>
